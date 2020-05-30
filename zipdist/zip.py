@@ -26,34 +26,6 @@ class Zipdist():
     Example 
     -------
 
-
-    .. code-block:: python
-
-
-        class Y(zipdist):
-        def __init__(self, name):
-            self.name = name
-            self.year = None
-            self._ready()
-
-        y = Y('Simpsons')
-        y.years = [2020,2019]
-        y.bart = np.zeros(10)
-        y.lisa = pd.DataFrame([{"Pi":3.1415,"e":2.7182}])
-        y._save()
-        assert os.path.isfile("Simpsons.tar.gz")
-
-        # Create a New Object, None of the prior attributes exists
-        assert os.path.isfile("Simpsons.tar.gz")
-        y2 = Y("Simpsons")
-        assert 'bart' not in y2.__dict__.keys()
-        assert 'years' not in y2.__dict__.keys()
-
-        # But you can rebuilt them easily with zipdist
-        y2._build(dest="Simpsons", dest_tar = "Simpsons.tar.gz")
-        assert isinstance(y2.bart, np.ndarray)
-        assert isinstance(y2.lise, pd.DataFrames)
-
     """
     def __init__(self, name = "testname"):
         self.name = name
