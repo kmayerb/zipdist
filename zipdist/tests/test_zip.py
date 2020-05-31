@@ -29,5 +29,5 @@ def test_basic_example():
 	assert isinstance(y2.bart, np.ndarray)
 	assert isinstance(y2.lisa, pd.DataFrame)
 
-	assert 0
+
 

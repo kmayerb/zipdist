@@ -60,8 +60,8 @@ Here is what Zipdist does
 ```bash
 Saving bart to .csv : Simpsons/bart.cs
 Saving lisa to .csv : Simpsons/lisa.csv
-Saving JSON with complex attribute defintions : Simpsons/complex_attributes.json
-Saving JSON with simple attribute defintions : Simpsons/simple_attributes.json
+Saving JSON with complex attribute definitions : Simpsons/complex_attributes.json
+Saving JSON with simple attribute definitions : Simpsons/simple_attributes.json
 Combining saved files in : [Simpsons.tar.gz].
 Contents of Simpsons.tar.gz :
 	Simpsons

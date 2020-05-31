@@ -274,7 +274,7 @@ class Zipdist():
         f = os.path.join(dest, 'simple_attributes.json')
         with open(f, 'w') as fp:
             json.dump(self.__dict__, fp, default = lambda x : None) # note the lambda function deals with things that can't be serialized
-            if verbose: sys.stdout.write(f"\tSaving JSON with simple attribute defintions : {f}\n")
+            if verbose: sys.stdout.write(f"\tSaving JSON with simple attribute definitions : {f}\n")
     
     def _save_complex_attributes(self, dest = None, verbose = True):
         """
@@ -292,7 +292,7 @@ class Zipdist():
         f = os.path.join(dest, 'complex_attributes.json')
         with open(f, 'w') as fp:
             json.dump(self._complex_attributes, fp)
-            if verbose: sys.stdout.write(f"\tSaving JSON with complex attribute defintions : {f}\n")
+            if verbose: sys.stdout.write(f"\tSaving JSON with complex attribute definitions : {f}\n")
 
     def _save_as_tar_gz(self, dest = None, dest_tar = None):
         """ 
