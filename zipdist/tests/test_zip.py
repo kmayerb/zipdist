@@ -61,8 +61,66 @@ def test_Zipdist_read():
 	z._make_dest_directory("blah")
 	assert os.path.isdir("blah")
 
-""" Integration Tests """
 
+def test_Zipdist_with_deeper_path():
+	""" 
+	Supposing that we want to store .tag.gz in a deeper folder ./layer1
+	instead of working dir. 
+	"""
+	if not os.path.isdir('layer1'):
+		os.mkdir("layer1")
+	class Y(Zipdist):
+		def __init__(self, name):
+			self.name = name
+			self.year = None
+
+	y = Y('Flanders')
+	y.years = [2020,2019]
+	y.bart = np.zeros(10)
+	y.lisa = pd.DataFrame([{"Pi":3.1415,"e":2.7182}])
+	y._save(dest = "layer1/Flanders", dest_tar = "layer1/Flanders.tar.gz" )
+	assert os.path.isfile("layer1/Flanders.tar.gz")
+
+	 # Create a New Object, None of the prior attributes exists
+	y2 = Y("Flanders")
+	assert 'bart' not in y2.__dict__.keys()
+	assert 'years' not in y2.__dict__.keys()
+	# But you can rebuilt it
+	y2._build(dest="layer1/Flanders", dest_tar = "layer1/Flanders.tar.gz")
+	assert isinstance(y2.bart, np.ndarray)
+	assert isinstance(y2.lisa, pd.DataFrame)
+
+
+def test_Zipdist_with_shallower_path():
+	""" 
+	Supposing that we want to store .tag.gz in a deeper folder ./layer1
+	instead of working dir. 
+	"""
+	class Y(Zipdist):
+		def __init__(self, name):
+			self.name = name
+			self.year = None
+
+	y = Y('Flanders')
+	y.years = [2020,2019]
+	y.bart = np.zeros(10)
+	y.lisa = pd.DataFrame([{"Pi":3.1415,"e":2.7182}])
+	y._save(dest = "../Springfield", dest_tar = "../Springfield.tar.gz" )
+	assert os.path.isfile("layer1/Flanders.tar.gz")
+
+	 # Create a New Object, None of the prior attributes exists
+	y2 = Y("Flanders")
+	assert 'bart' not in y2.__dict__.keys()
+	assert 'years' not in y2.__dict__.keys()
+	# But you can rebuilt it
+	y2._build(dest = "../Springfield", dest_tar = "../Springfield.tar.gz")
+	assert isinstance(y2.bart, np.ndarray)
+	assert isinstance(y2.lisa, pd.DataFrame)
+
+
+
+
+""" Integration Tests """
 def test_basic_example():
 	""" Do a full _save and _build basic example """
 	class Y(Zipdist):
@@ -70,22 +128,27 @@ def test_basic_example():
 			self.name = name
 			self.year = None
 
-	y = Y('Simpsons')
-	y.years = [2020,2019]
+	y = Y(name ='Simpsons')
+	y.years = [1989, 2020]
 	y.bart = np.zeros(10)
 	y.lisa = pd.DataFrame([{"Pi":3.1415,"e":2.7182}])
-	y._save()
-	assert os.path.isfile("Simpsons.tar.gz")
+	y._save(dest="Simpsons", dest_tar = "Simpsons.tar.gz")
 
-	 # Create a New Object, None of the prior attributes exists
-	assert os.path.isfile("Simpsons.tar.gz")
-	y2 = Y("Simpsons")
-	assert 'bart' not in y2.__dict__.keys()
-	assert 'years' not in y2.__dict__.keys()
-	# But you can rebuilt it
-	y2._build(dest="Simpsons", dest_tar = "Simpsons.tar.gz")
-	assert isinstance(y2.bart, np.ndarray)
-	assert isinstance(y2.lisa, pd.DataFrame)
+
+	ynew = Y(name = "Simpsons")
+	ynew._build(dest="Simpsons", dest_tar = "Simpsons.tar.gz")
+	sys.stdout.write(f"ynew.years: {ynew.years}\n")
+	sys.stdout.write(f"ynew.lisa:\n{ynew.lisa}\n")
+	sys.stdout.write(f"ynew.bart: {ynew.bart}\n")
+	ynew = Y("Simpsons")
+	assert 'lisa' not in ynew.__dict__.keys()
+	assert 'bart' not in ynew.__dict__.keys()
+	assert 'years' not in ynew.__dict__.keys()
+	ynew._ready(dest="Simpsons", dest_tar = "Simpsons.tar.gz")
+	ynew._reload_complex('lisa')
+	assert isinstance(ynew.lisa, pd.DataFrame)
+	ynew._reload_simple('years')
+	assert isinstance(ynew.years, list)
 
 
 def test_Zipdist_save_using_name_attribute_only():
@@ -143,7 +206,7 @@ def test_Zipdist_reload_complex():
 	y2._reload_complex(k ='lisa')
 	assert isinstance(y2.lisa, pd.DataFrame)
 
-def test_Zipdist_relad_simple():
+def test_Zipdist_reload_simple():
 	""" Example Where only one attribute is loaded using _ready, _reload_complex"""
 	class Y(Zipdist):
 		def __init__(self, name):
@@ -225,6 +288,20 @@ def test_Zipdist_reload_simple_warning_for_missing():
 		y2._reload_simple(k = "maggie")
 		assert len(w) == 1
 		assert w[0].message.args[0] == "Could not reload simple attribute maggie"
+
+
+def test_cleanups():
+	""" Adds cleanup of folders and .tar.gz files produced during testing"""
+	os.system(f"rm -rf Simpsons")
+	os.system(f"rm -rf siblings")
+	os.system(f"rm -rf testname")
+	os.system(f"rm -rf blah")
+	os.system(f"rm -rf layer1")
+	os.system(f"rm -rf Flanders")
+	os.system(f"rm -rf Springfield")
+	os.system(f"rm Simpsons.tar.gz")
+	os.system(f"rm testname.tar.gz")
+	os.system(f"rm siblings.tar.gz")
 
 
 
