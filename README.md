@@ -2,6 +2,8 @@
 
 Keeping numpy and pandas attributes of python classes nice and tidy
 
+[![Build Status](https://travis-ci.com/kmayerb/zipdist.svg?branch=master)](https://travis-ci.com/kmayerb/zipdist)
+
 
 ## Example
 
