@@ -1,3 +1,2 @@
 numpy>=1.18.1
-pytest 
-json
+pytest
