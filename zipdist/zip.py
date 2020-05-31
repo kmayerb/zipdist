@@ -6,7 +6,6 @@ import tarfile
 import sys
 import warnings
 
-
 class Zipdist():
     """ 
     A parent class that bestows the ability to rebuild child classes from a .tar.gz file.
@@ -381,20 +380,3 @@ class Zipdist():
             # loads the 
             simple_attributes = json.load(fp)
             self._simple_attributes = simple_attributes 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

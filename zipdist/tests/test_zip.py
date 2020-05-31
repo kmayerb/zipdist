@@ -131,13 +131,10 @@ def test_Zipdist_reload_complex():
 		def __init__(self, name):
 			self.name = name
 
-
 	y = Y(name = 'Simpsons')
-
 	y.bart = np.zeros(10)
 	y.lisa = pd.DataFrame([{"Pi":3.1415,"e":2.7182}])
 	y._save(dest="Simpsons", dest_tar = "Simpsons.tar.gz")
-
 	y2 = Y('Simpsons')
 	with pytest.raises(AttributeError):
 		y2.lisa
@@ -146,7 +143,7 @@ def test_Zipdist_reload_complex():
 	y2._reload_complex(k ='lisa')
 	assert isinstance(y2.lisa, pd.DataFrame)
 
-def test_Zipdist_reload_complex():
+def test_Zipdist_relad_simple():
 	""" Example Where only one attribute is loaded using _ready, _reload_complex"""
 	class Y(Zipdist):
 		def __init__(self, name):
@@ -165,7 +162,27 @@ def test_Zipdist_reload_complex():
 	y2._reload_simple(k = "homer")
 	assert y2.homer == 1
 
+
 def test_Zipdist_reload_complex_KeyError():
+	""" Example Where only one attribute is loaded using _ready, _reload_complex"""
+	class Y(Zipdist):
+		def __init__(self, name):
+			self.name = name
+
+	y = Y(name = 'Simpsons')
+	y.homer = 1
+	y.bart = np.zeros(10)
+	y.lisa = pd.DataFrame([{"Pi":3.1415,"e":2.7182}])
+	y._save(dest="Simpsons", dest_tar = "Simpsons.tar.gz")
+
+	y2 = Y('Simpsons')
+	with pytest.raises(AttributeError):
+		y2.lisa
+	y2._ready()
+	with pytest.raises(KeyError):
+		y2._reload_complex(k = "moe")
+
+def test_Zipdist_reload_simple_KeyError():
 	""" Example Where only one attribute is loaded using _ready, _reload_complex"""
 	class Y(Zipdist):
 		def __init__(self, name):
