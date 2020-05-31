@@ -7,13 +7,20 @@ Keeping NumPy and Pandas attributes of python classes nice and tidy
 
 
 The Zipdist parent class provides methods to classes for saving
-NumPy arrays and pandas DataFrame object attributes in a single 
+NumPy arrays and Pandas DataFrame object attributes in a single 
 `.tar.gz` file and reloading those attributes back into a newinstance. 
 
 As an added benefit, the `.tar.gz` provides a tidy human-readable 
 record of your Python class attributes as .csv files, 
 which you can port on over to another platform like 
 R, Excel, Julia, or Matlab.
+
+## Install
+
+```
+pip install zipdist
+```
+
 
 ## Basic Example
 
