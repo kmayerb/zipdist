@@ -14,6 +14,6 @@ install:
   - pip install coveralls
 script:
   - pytest
-  - pytest --cov=pwseqdist/
+  - pytest --cov=zipdist/
 after_success:
   - coveralls
