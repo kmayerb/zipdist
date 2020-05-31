@@ -3,7 +3,7 @@
 Keeping numpy and pandas attributes of python classes nice and tidy
 
 [![Build Status](https://travis-ci.com/kmayerb/zipdist.svg?branch=master)](https://travis-ci.com/kmayerb/zipdist)
-
+[![Coverage Status](https://coveralls.io/repos/github/kmayerb/zipdist/badge.svg?branch=master)](https://coveralls.io/github/kmayerb/zipdist?branch=master)
 
 ## Example
 

@@ -30,8 +30,18 @@ class Zipdist():
     def __init__(self, name = "testname"):
         self.name = name
 
-    def _ready(self):
-        sys.stdout.write("zipdist : Yahs Queen\n")
+    def _ready(self, dest = None, dest_tar = None, verbose = True):
+        sys.stdout.write("Zipdist : Yahs Queen\n")
+        if dest is None:
+            dest = str(self.name)
+        if dest_tar is None:
+            dest_tar = f"{dest}.tar.gz"
+        
+        self._build(dest = dest, dest_tar = dest_tar, verbose = verbose, reload = False)
+        sys.stdout.write(f"You have note reloaded the object yet, but you can from /{self.dest}/\n")
+        sys.stdout.write(f"\tIf you meant to auto-reload the object, Try ._build() instead of ._ready()\n")
+        sys.stdout.write(f"\tOr for loading numpy and pandas attributes attributes one by one:\n")
+        sys.stdout.write(f"\t\ttry ._reload_complex(k = ATTRIBUTE_NAME)\n")
  
     def _get_attributes(self):
         return list(self.__dict__.keys())
