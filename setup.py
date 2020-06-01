@@ -10,7 +10,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 opts = dict(name='zipdist',
             maintainer='Koshlan Mayer-Blackwell',
             maintainer_email='kmayerbl@fredhutch.org',
-            description='Tidy saving andeloading of Numpy and Pandas object attributes',
+            description='Tidy saving and loading of Numpy and Pandas object attributes',
             long_description=long_description,
             long_description_content_type='text/markdown',
             url='https://github.com/kmayerb/zipdist',
