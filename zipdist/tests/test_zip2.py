@@ -20,7 +20,7 @@ def test_Zipdist2():
 
 
 	z._save(dest = "xxx", dest_tar = "xxx.tar.gz")
-	assert os.path.isfile("examplezip2.tar.gz")
+	assert os.path.isfile("xxx.tar.gz")
 
 	x2 = X(name = 'examplezip2')
 	assert 'year' not in x2.__dict__.keys()
