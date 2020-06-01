@@ -4,16 +4,14 @@ Keeping NumPy and Pandas attributes of python classes nice and tidy
 
 [![Build Status](https://travis-ci.com/kmayerb/zipdist.svg?branch=master)](https://travis-ci.com/kmayerb/zipdist)
 [![Coverage Status](https://coveralls.io/repos/github/kmayerb/zipdist/badge.svg?branch=master)](https://coveralls.io/github/kmayerb/zipdist?branch=master)
+[![PyPI version](https://badge.fury.io/py/zipdist.svg)](https://badge.fury.io/py/zipdist)
 
+The Zipdist parent class provides methods for saving and reloading
+NumPy arrays and Pandas DataFrame object attributes.
 
-The Zipdist parent class provides methods to classes for saving
-NumPy arrays and Pandas DataFrame object attributes in a single 
-`.tar.gz` file and reloading those attributes back into a newinstance. 
+Complex attributes are saved to a single `.tar.gz` file.
 
-As an added benefit, the `.tar.gz` provides a tidy human-readable 
-record of your Python class attributes as .csv files, 
-which you can port on over to another platform like 
-R, Excel, Julia, or Matlab.
+The contents of the `.tar.gz` provides a tidy human-readable record of Pandas and Numpy Python class attributes as .csv or files. 
 
 ## Install
 
