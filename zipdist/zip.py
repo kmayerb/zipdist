@@ -5,6 +5,8 @@ import pandas as pd
 import tarfile
 import sys
 import warnings
+from . import conversions
+
 
 class Zipdist():
     """ 
@@ -49,7 +51,7 @@ class Zipdist():
         return {k:type(v) for k,v in self.__dict__.items() }
 
 
-    def _save(self, dest = None, dest_tar = None, verbose = True):
+    def _save(self, dest = None, dest_tar = None, verbose = True, use_csv = True, use_binary = True):
         """
         Saves atttributes of a Python object into a <dest> destination folder
         then tar and gz those files. 
@@ -77,9 +79,9 @@ class Zipdist():
         # make <dest> destination folder if it does not exist
         self._make_dest_directory(dest = dest, verbose = verbose)
         # save numpy attributes as binary files into <dest> destination
-        self._save_numpy_attributes(dest = dest, verbose = verbose)
+        self._save_numpy_attributes(dest = dest, verbose = verbose, use_csv = True, use_binary = True)
         # save pandas attributes as binary files into <dest> destination
-        self._save_pandas_attributes(dest = dest, verbose = verbose)
+        self._save_pandas_attributes(dest = dest, verbose = verbose, use_csv = True, use_binary = True)
         # save a json dictionary so we can recover complex attributes, and know their types
         self._save_complex_attributes(dest = dest)
         # save simple attributes as a json
@@ -202,10 +204,16 @@ class Zipdist():
         
         def _dataframe_from_csv(fn):
             return pd.read_csv(fn, sep= ",")
-
+        assert fileformat in ['csv','feather','npy']
         try:
-            func = {"np.ndarray"   : _ndarray_from_csv,
-                    "pd.DataFrame": _dataframe_from_csv}[filetype]
+            if fileformat == 'csv':
+                func = {"np.ndarray"   : conversions._ndarray_from_csv,
+                       "pd.DataFrame"  : conversions._dataframe_from_csv}[filetype]
+            elif fileformat in ['npy','feather']:# use_binary:
+                func = {"np.ndarray"   : conversions._ndarray_from_npy,
+                        "pd.DataFrame" : conversions._dataframe_from_feather}[filetype]
+
+
             x = func(filename)
             setattr(self, k, x)
             if verbose: sys.stdout.write(f"\tsetting [{fileformat}] to [{filetype}] for attribute {k} from: {filename}\n")
@@ -233,7 +241,7 @@ class Zipdist():
             if verbose: sys.stdout.write(f"\tMaking directory {dest}/.\n")
             os.mkdir(dest)
 
-    def _save_numpy_attributes(self, dest = None, verbose = True):
+    def _save_numpy_attributes(self, dest = None, verbose = True, use_csv = True, use_binary = True):
         """
         Save Numpy ndarray attribute as .csv file to the dest folder
 
@@ -245,13 +253,21 @@ class Zipdist():
         self._get_attributes()
         for k in self._get_attributes():
             if isinstance(getattr(self,k), np.ndarray):
-                f = os.path.join(dest, f"{k}.cs")
-                if verbose: sys.stdout.write(f"\tSaving {k} to .csv : {f}\n")
-                getattr(self,k).tofile(file= f, sep = ",")
+
+                if use_csv:
+                    f = os.path.join(dest, f"{k}.csv")
+                    if verbose: sys.stdout.write(f"\tSaving {k} to .csv : {f}\n")
+                    getattr(self,k).tofile(file= f, sep = ",") #conversions._ndarray_to_csv(arr = getattr(self,k), fn = f)
+                    self._complex_attributes[k] = {"filename": f,  "filetype" : "np.ndarray", "fileformat":"csv"} # "type" : type(getattr(self,k)) 
+                if use_binary:
+                    f = os.path.join(dest, f"{k}.npy")
+                    if verbose: sys.stdout.write(f"\tSaving {k} to .npy : {f}\n")
+                    conversions._ndarray_to_npy(arr = getattr(self,k), fn = f)
                 # keep record of filename associated with each attr
-                self._complex_attributes[k] = {"filename": f,  "filetype" : "np.ndarray", "fileformat":"csv"} # "type" : type(getattr(self,k)) 
+                    self._complex_attributes[k] = {"filename": f,  "filetype" : "np.ndarray", "fileformat":"npy"} # "type" : type(getattr(self,k)) 
     
-    def _save_pandas_attributes(self, dest = None, verbose = True):
+
+    def _save_pandas_attributes(self, dest = None, verbose = True, use_csv = True, use_binary = True):
         """
         Save Pandas DataFrame attribute as .csv file to the dest folder
 
@@ -262,11 +278,18 @@ class Zipdist():
         """
         for k in self._get_attributes():
             if isinstance(getattr(self,k), pd.DataFrame):
-                f = os.path.join(dest, f"{k}.csv")
-                if verbose: sys.stdout.write(f"\tSaving {k} to .csv : {f}\n")
-                getattr(self,k).to_csv(f, sep = "," , index =False)
+                if use_csv:
+                    f = os.path.join(dest, f"{k}.csv")
+                    if verbose: sys.stdout.write(f"\tSaving {k} to .csv : {f}\n")
+                    getattr(self,k).to_csv(f, sep = "," , index =False)
+                    self._complex_attributes[k]={"filename":f,  "filetype" : "pd.DataFrame", "fileformat":"csv"} #"type" : type(getattr(self,k))
+    
+                if use_binary:
+                    f = os.path.join(dest, f"{k}.feather")
+                    if verbose: sys.stdout.write(f"\tSaving {k} to .feather : {f}\n")
+                    conversions._dataframe_to_feather(df = getattr(self,k), fn = f)
                 # keep record of filename associated with each attr
-                self._complex_attributes[k]={"filename":f,  "filetype" : "pd.DataFrame", "fileformat":"csv"} #"type" : type(getattr(self,k))
+                    self._complex_attributes[k]={"filename":f,  "filetype" : "pd.DataFrame", "fileformat":"feather"} #"type" : type(getattr(self,k))
     
     def _save_simple_attributes(self, dest = None, verbose= True):
         """

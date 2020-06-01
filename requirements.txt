@@ -1,2 +1,3 @@
 numpy>=1.18.1
+feather-format>=0.4.1
 pytest
