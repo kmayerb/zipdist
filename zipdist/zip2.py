@@ -6,6 +6,7 @@ import tarfile
 import sys
 import warnings
 from . import conversions
+from . import extraction
 
 class Zipdist2():
     """ 
@@ -81,7 +82,7 @@ class Zipdist2():
         # tar and gz all the abject attributes
         self._save_as_tar_gz(dest = dest, dest_tar = dest_tar)
 
-    def _build(self, target, dest=None, dest_tar=None, verbose = True, reload = True):
+    def _build(self, target, dest=None, dest_tar=None, verbose = True, reload = True, extract_all = False):
         """
         Builds attributes of a python class using a .tar.gz directory
 
@@ -114,7 +115,11 @@ class Zipdist2():
         self.dest = dest
         self.dest_tar = dest_tar
         # extracts a tarfile
-        self._extract_tarfile( dest_tar = dest_tar , verbose = verbose)
+        if extract_all:
+            self._extract_tarfile( dest_tar = dest_tar , verbose = verbose)
+
+        # initialize an extraction machine
+        self.extractor = extraction.ExtractMachina(dest_tar = dest_tar)
         # open the recovery_attributes.json and get information on attribute names and types
         # this will create self.recovery_attributes which can be used to recover the numpy and pandas attributes
         self._get_complex_attribute_definitions(dest = dest,  dest_tar = dest_tar, verbose = verbose)
@@ -200,19 +205,21 @@ class Zipdist2():
         
         # assert fileformat in ['csv','feather','npy']
         try:
-            if fileformat == 'csv':
-                func = {"np.ndarray"   : conversions._ndarray_from_csv,
-                       "pd.DataFrame"  : conversions._dataframe_from_csv}[filetype]
-            elif fileformat in ['npy','feather']:# use_binary:
-                func = {"np.ndarray"   : conversions._ndarray_from_npy,
-                        "pd.DataFrame" : conversions._dataframe_from_feather}[filetype]
+        #     if fileformat == 'csv':
+        #         func = {"np.ndarray"   : conversions._ndarray_from_csv,
+        #                "pd.DataFrame"  : conversions._dataframe_from_csv}[filetype]
+        #     elif fileformat in ['npy','feather']:# use_binary:
+        #         func = {"np.ndarray"   : conversions._ndarray_from_npy,
+        #                 "pd.DataFrame" : conversions._dataframe_from_feather}[filetype]
 
 
-            x = func(filename)
+            #x = func(filename)
+            filename = os.path.basename(filename)
+            x = self.extractor.return_extracted_component(filename = filename, filetype= filetype)
             setattr(self.target, k, x)
             if verbose: sys.stdout.write(f"\tsetting [{fileformat}] to [{filetype}] for attribute {k} from: {filename}\n")
         except KeyError:
-            warnings.warn(f"Could not reload {k}, {filename} had unrecognized {filetype}")
+            warnings.warn(f"Could not reload {k}, {filename} not recognized")
 
     def _reload_simple(self, k, verbose = True):
         """ 
@@ -251,8 +258,13 @@ class Zipdist2():
                 if use_csv:
                     f = os.path.join(dest, f"{k}.csv")
                     if verbose: sys.stdout.write(f"\tSaving {k} to .csv : {f}\n")
-                    getattr(self.target,k).tofile(file= f, sep = ",") #conversions._ndarray_to_csv(arr = getattr(self.target,k), fn = f)
-                    self._complex_attributes[k] = {"filename": f,  "filetype" : "np.ndarray", "fileformat":"csv"} # "type" : type(getattr(self.target,k)) 
+                    #getattr(self.target,k).tofile(file= f, sep = ",") #conversions._ndarray_to_csv(arr = getattr(self.target,k), fn = f)
+                    try: #if len(getattr(self.target,k).shape) <= 2:
+                        np.savetxt(f, getattr(self.target,k), delimiter = ",")
+                        self._complex_attributes[k] = {"filename": f,  "filetype" : "np.ndarray", "fileformat":"csv"} # "type" : type(getattr(self.target,k)) 
+                    except ValueError as exc:
+                        if verbose: sys.stdout.write(f"Currently you CANNOT save >2D ndarrays like {k} to .csv, np.savetxt would return ValueError:'{exc}'\n")
+                        # TODO : Add this functionality along the lines of Joe Kington https://stackoverflow.com/questions/3685265/how-to-write-a-multidimensional-array-to-a-text-file
                 if use_binary:
                     f = os.path.join(dest, f"{k}.npy")
                     if verbose: sys.stdout.write(f"\tSaving {k} to .npy : {f}\n")
@@ -369,12 +381,14 @@ class Zipdist2():
             write status updates to sys.stdout if True
         
         """
-        complex_attributes_json = os.path.join(dest,'complex_attributes.json')
-        assert os.path.isfile(complex_attributes_json)
-        with open(complex_attributes_json, 'r') as fp:
+        #complex_attributes_json = os.path.join(dest,'complex_attributes.json')
+        #assert os.path.isfile(complex_attributes_json)
+        #with open(complex_attributes_json, 'r') as fp:
             # loads the 
-            complex_attributes = json.load(fp)
-            self._complex_attributes =  complex_attributes 
+        #    complex_attributes = json.load(fp)
+        #   self._complex_attributes =  complex_attributes 
+        complex_attributes = self.extractor.return_extracted_component(filename = 'complex_attributes.json', filetype = "json")
+        self._complex_attributes =  complex_attributes
 
     def _get_simple_attribute_definitions(self, dest = None, dest_tar = None, verbose = True):
         """
@@ -391,9 +405,12 @@ class Zipdist2():
             write status updates to sys.stdout if True
         
         """
-        simple_attributes_json = os.path.join(dest,'simple_attributes.json')
-        assert os.path.isfile(simple_attributes_json)
-        with open(simple_attributes_json, 'r') as fp:
-            # loads the 
-            simple_attributes = json.load(fp)
-            self._simple_attributes = simple_attributes 
+        # simple_attributes_json = os.path.join(dest,'simple_attributes.json')
+        # assert os.path.isfile(simple_attributes_json)
+        # with open(simple_attributes_json, 'r') as fp:
+        #     # loads the 
+        #     simple_attributes = json.load(fp)
+        #     self._simple_attributes = simple_attributes
+        simple_attributes = self.extractor.return_extracted_component(filename = 'simple_attributes.json', filetype = "json")
+        self._simple_attributes = simple_attributes
+

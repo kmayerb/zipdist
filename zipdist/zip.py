@@ -257,7 +257,7 @@ class Zipdist():
                 if use_csv:
                     f = os.path.join(dest, f"{k}.csv")
                     if verbose: sys.stdout.write(f"\tSaving {k} to .csv : {f}\n")
-                    getattr(self,k).tofile(file= f, sep = ",") #conversions._ndarray_to_csv(arr = getattr(self,k), fn = f)
+                    np.savetxt(f, getattr(self,k), delimiter = ",") #conversions._ndarray_to_csv(arr = getattr(self,k), fn = f)
                     self._complex_attributes[k] = {"filename": f,  "filetype" : "np.ndarray", "fileformat":"csv"} # "type" : type(getattr(self,k)) 
                 if use_binary:
                     f = os.path.join(dest, f"{k}.npy")
