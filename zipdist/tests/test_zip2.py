@@ -34,7 +34,48 @@ def test_Zipdist2():
 	assert np.all(x2.name == x.name)
 	assert np.all(x2.year == x.year)
 
+
+def test_Zipdist2_example():
+	from zipdist.zip2 import Zipdist2
+	import pandas as pd
+	import numpy as np
+	import os
+
+	class X():
+		def __init__(self, name):
+			self.name = name
+
+	x = X(name = 'example_target_object')
+	x.example_simple_attr = [1989, 2020]
+	x.example_np_attr = np.array([[0, 1, 2, 3], [4, 5, 6, 7]])
+	x.example_pd_attr  = pd.DataFrame({"A":[1,2,3], "B":[2,4,6]})
+
+	z = Zipdist2(name = "zipper", target = x)
+	z._save(dest = "archive", dest_tar = "archive.tar.gz")
+	assert os.path.isfile("archive.tar.gz")
+
+	x_new = X(name = 'example_target_object')
+	z = Zipdist2(name = "zipper", target = x_new)
+
+	# You can use the z._build() and reload all object attributes
+	z._build(target = x_new, dest = "archive", dest_tar = "archive.tar.gz")
+
+	print(f"For instance:")
+	print(f"\tx_new.example_simple_attr:\n{x_new.example_simple_attr}")
+	print(f"\tx_new.example_np_attr:\n{x_new.example_np_attr}")
+	print(f"\tx_new.example_pd_attr:\n{x_new.example_pd_attr}")
+
+	# You can alternatively use the z._ready() and reload object attributes one by one
+	x_new = X(name = 'example_target_object')
+	z = Zipdist2(name = "zipper", target = x_new)
+	z._ready(target = x_new, dest = "archive", dest_tar = "archive.tar.gz")
+	z._reload_complex(k='example_np_attr')
+	z._reload_simple(k='example_simple_attr')
+
+
+
 def test_cleanups():
 	""" Adds cleanup of folders and .tar.gz files produced during testing"""
 	os.system(f"rm -rf xxx")
+	os.system(f"rm archive.tar.gz")
 	os.system(f"rm xxx.tar.gz")

@@ -32,6 +32,16 @@ class Zipdist2():
         self.target = target
         self.name = name
 
+    def _ready(self, target = None, dest = None, dest_tar = None, verbose = True):
+        if target is None:
+            target = self.taget
+       
+        self._build(target= target, dest = dest, dest_tar = dest_tar, verbose = verbose, reload = False)
+        sys.stdout.write(f"\tYou have not reloaded any object attributes yet, but you can from /{self.dest}/\n")
+        sys.stdout.write(f"\tIf you meant to auto-reload the object, Try ._build() instead of ._ready()\n")
+        sys.stdout.write(f"\tOr for loading numpy and pandas attributes attributes one by one:\n")
+        sys.stdout.write(f"\t\ttry ._reload_complex(k = ATTRIBUTE_NAME)\n")
+ 
 
     def _get_attributes(self, target = None):
         if target is None:
@@ -161,7 +171,7 @@ class Zipdist2():
             if v is None:
                 continue 
             setattr(self.target, k, v)
-            if verbose: sys.stdout.write(f"\tsetting simple attribute {k} to {v}\n")    
+            if verbose: sys.stdout.write(f"\tSetting simple attribute {k} to {v}\n")    
             
     def _reload_complex_all(self, verbose = True):
         """ 
@@ -217,7 +227,7 @@ class Zipdist2():
             filename = os.path.basename(filename)
             x = self.extractor.return_extracted_component(filename = filename, filetype= filetype)
             setattr(self.target, k, x)
-            if verbose: sys.stdout.write(f"\tsetting [{fileformat}] to [{filetype}] for attribute {k} from: {filename}\n")
+            if verbose: sys.stdout.write(f"\tSetting [{fileformat}] to [{filetype}] for attribute {k} from: {filename}\n")
         except KeyError:
             warnings.warn(f"Could not reload {k}, {filename} not recognized")
 
@@ -232,7 +242,7 @@ class Zipdist2():
         """
         try:
             setattr(self.target, k, self._simple_attributes[k])
-            if verbose: sys.stdout.write(f"\tsetting attribute {k}\n") 
+            if verbose: sys.stdout.write(f"\tSetting attribute {k}\n") 
         except KeyError:
              warnings.warn(f"Could not reload simple attribute {k}")
 

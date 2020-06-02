@@ -41,7 +41,6 @@ class ExtractMachina():
 
 		dest_filename = os.path.join(self.dest, filename)
 		with tarfile.open(self.dest_tar) as tar:
-			print(dest_filename)
 			with tar.extractfile(dest_filename) as fh:
 				if filetype == "json":
 					if filename == "complex_attributes.json":
