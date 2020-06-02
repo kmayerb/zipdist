@@ -10,7 +10,7 @@ The Zipdist2 class provides methods for saving and reloading NumPy arrays and Pa
 
 Complex attributes are saved to a single `.tar.gz` file.
 
-The contents of the `.tar.gz` provides a tidy human-readable record of Pandas and Numpy Python class attributes as .csv or files. 
+The contents of the `.tar.gz` provides a tidy human-readable record of Pandas and Numpy Python class attributes as .csv and binary files. 
 
 ## Install
 
@@ -40,19 +40,20 @@ z = Zipdist2(name = "zipper", target = x)
 z._save(dest = "archive", dest_tar = "archive.tar.gz")
 assert os.path.isfile("archive.tar.gz")
 ```
+
 ```
 Saving example_np_attr to .csv : archive/example_np_attr.csv
-	Saving example_np_attr to .npy : archive/example_np_attr.npy
-	Saving example_pd_attr to .csv : archive/example_pd_attr.csv
-	Saving example_pd_attr to .feather : archive/example_pd_attr.feather
-	Saving JSON with complex attribute definitions : archive/complex_attributes.json
-	Saving JSON with simple attribute definitions : archive/simple_attributes.json
-	Combining saved files in : [archive.tar.gz].
+Saving example_np_attr to .npy : archive/example_np_attr.npy
+Saving example_pd_attr to .csv : archive/example_pd_attr.csv
+Saving example_pd_attr to .feather : archive/example_pd_attr.feather
+Saving JSON with complex attribute definitions : archive/complex_attributes.json
+Saving JSON with simple attribute definitions : archive/simple_attributes.json
+Combining saved files in : [archive.tar.gz].
 ```
 
 
 
-### Contents of `archive.tar.gz`
+### Contents of archive.tar.gz
 
 ```
 archive
@@ -74,10 +75,10 @@ z._build(target = x_new, dest = "archive", dest_tar = "archive.tar.gz")
 ```
 
 ```
-	Setting simple attribute name to example_target_object
-	Setting simple attribute example_simple_attr to [1989, 2020]
-	Setting [npy] to [np.ndarray] for attribute example_np_attr from: example_np_attr.npy
-	Setting [feather] to [pd.DataFrame] for attribute example_pd_attr from: example_pd_attr.feather
+Setting simple attribute name to example_target_object
+Setting simple attribute example_simple_attr to [1989, 2020]
+Setting [npy] to [np.ndarray] for attribute example_np_attr from: example_np_attr.npy
+Setting [feather] to [pd.DataFrame] for attribute example_pd_attr from: example_pd_attr.feather
 ```
 
 For instance:
@@ -95,7 +96,8 @@ For instance:
 2  3  6
 ```
 
-### Reload Objects Attribute One at a Time with `._ready()`, `_reload_complex()`, and `_reload_simple()`
+### Reload Simple and Complex Object Attributes One by One with `._ready()`, `_reload_simple()`, and `_reload_complex()`.
+
 
 ```python
 # You can alternatively use the z._ready() and reload object attributes one by one
