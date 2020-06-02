@@ -17,13 +17,14 @@ opts = dict(name='zipdist',
             license='MIT',
             author='Koshlan Mayer-Blackwell',
             author_email='kmayerbl@fredhutch.org',
-            version='0.1.2',
+            version='0.1.3',
             packages=PACKAGES
            )
 
 install_reqs = [
       'numpy>=1.18.1',
-      'pandas>=0.24.2']
+      'pandas>=0.24.2', 
+      'feather-format>=0.4.1']
 
 if __name__ == "__main__":
       setup(**opts, install_requires=install_reqs)
