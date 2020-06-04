@@ -37,10 +37,10 @@ class Zipdist2():
             target = self.taget
        
         self._build(target= target, dest = dest, dest_tar = dest_tar, verbose = verbose, reload = False)
-        sys.stdout.write(f"\tYou have not reloaded any object attributes yet, but you can from /{self.dest}/\n")
-        sys.stdout.write(f"\tIf you meant to auto-reload the object, Try ._build() instead of ._ready()\n")
-        sys.stdout.write(f"\tOr for loading numpy and pandas attributes attributes one by one:\n")
-        sys.stdout.write(f"\t\ttry ._reload_complex(k = ATTRIBUTE_NAME)\n")
+        if verbose: sys.stdout.write(f"\tYou have not reloaded any object attributes yet, but you can from /{self.dest}/\n")
+        if verbose:  sys.stdout.write(f"\tIf you meant to auto-reload the object, Try ._build() instead of ._ready()\n")
+        if verbose: sys.stdout.write(f"\tOr for loading numpy and pandas attributes attributes one by one:\n")
+        if verbose: sys.stdout.write(f"\t\ttry ._reload_complex(k = ATTRIBUTE_NAME)\n")
  
 
     def _get_attributes(self, target = None):
@@ -126,8 +126,7 @@ class Zipdist2():
         if dest_tar is None:
             dest_tar = f"{dest}.tar.gz"
 
-        assert str(dest_tar.replace(".tar.gz", "")) == str(dest), "dest and dest_tar must share a common base name"
-        
+
         self.dest = dest
         self.dest_tar = dest_tar
         # extracts a tarfile
