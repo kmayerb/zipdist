@@ -25,6 +25,7 @@ def test_Zipdist2():
 	x2 = X(name = 'examplezip2')
 	assert 'year' not in x2.__dict__.keys()
 	z._build(target = x2, dest = "xxx", dest_tar = "xxx.tar.gz")
+	print(x.__dict__.keys())
 	assert isinstance(x2.exnp, np.ndarray)
 	#assert np.all(x2.exnp == x.exnp)
 	print(x2.exnp)
@@ -71,6 +72,35 @@ def test_Zipdist2_example():
 	z._ready(target = x_new, dest = "archive", dest_tar = "archive.tar.gz")
 	z._reload_complex(k='example_np_attr')
 	z._reload_simple(k='example_simple_attr')
+
+"""
+	Saving example_np_attr to .csv : archive/example_np_attr.csv
+	Saving example_np_attr to .npy : archive/example_np_attr.npy
+	Saving example_pd_attr to .csv : archive/example_pd_attr.csv
+	Saving example_pd_attr to .feather : archive/example_pd_attr.feather
+	Saving JSON with complex attribute definitions : archive/complex_attributes.json
+	Saving JSON with simple attribute definitions : archive/simple_attributes.json
+	Combining saved files in : [archive.tar.gz].
+	Setting simple attribute name to example_target_object
+	Setting simple attribute example_simple_attr to [1989, 2020]
+	Setting [npy] to [np.ndarray] for attribute example_np_attr from: example_np_attr.npy
+	Setting [feather] to [pd.DataFrame] for attribute example_pd_attr from: example_pd_attr.feather
+For instance:
+	x_new.example_simple_attr:
+[1989, 2020]
+	x_new.example_np_attr:
+[[0 1 2 3]
+ [4 5 6 7]]
+	x_new.example_pd_attr:
+   A  B
+0  1  2
+1  2  4
+2  3  6
+	You have not reloaded any object attributes yet, but you can from /archive/
+	If you meant to auto-reload the object, Try ._build() instead of ._ready()
+	Or for loading numpy and pandas attributes attributes one by one:
+		try ._reload_complex(k = ATTRIBUTE_NAME)
+"""
 
 
 

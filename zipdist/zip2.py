@@ -77,14 +77,17 @@ class Zipdist2():
             dest = str(self.name)
         if dest_tar is None:
             dest_tar = f"{dest}.tar.gz"
+
+        assert str(dest_tar.replace(".tar.gz", "")) == str(dest), "dest and dest_tar must share a common base name"
+
         self._complex_attributes = dict()
         self._simple_attributes = dict()
         # make <dest> destination folder if it does not exist
         self._make_dest_directory(dest = dest, verbose = verbose)
         # save numpy attributes as binary files into <dest> destination
-        self._save_numpy_attributes(dest = dest, verbose = verbose, use_csv = True, use_binary = True)
+        self._save_numpy_attributes(dest = dest, verbose = verbose, use_csv = use_csv, use_binary = use_binary)
         # save pandas attributes as binary files into <dest> destination
-        self._save_pandas_attributes(dest = dest, verbose = verbose, use_csv = True, use_binary = True)
+        self._save_pandas_attributes(dest = dest, verbose = verbose, use_csv = use_csv, use_binary = use_binary)
         # save a json dictionary so we can recover complex attributes, and know their types
         self._save_complex_attributes(dest = dest)
         # save simple attributes as a json
@@ -122,6 +125,9 @@ class Zipdist2():
             dest = str(self.name)
         if dest_tar is None:
             dest_tar = f"{dest}.tar.gz"
+
+        assert str(dest_tar.replace(".tar.gz", "")) == str(dest), "dest and dest_tar must share a common base name"
+        
         self.dest = dest
         self.dest_tar = dest_tar
         # extracts a tarfile
