@@ -15,7 +15,7 @@ The contents of the `.tar.gz` provides a tidy human-readable record of Pandas an
 ## Install
 
 ```
-pip install zipdist==0.1.3
+pip install zipdist==0.1.5
 ```
 
 
